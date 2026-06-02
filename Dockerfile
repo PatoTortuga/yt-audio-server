@@ -1,4 +1,4 @@
-FROM node:20-bullseye-slim
+FROM node:20-bookworm-slim
 
 # Install Python 3, FFmpeg, and yt-dlp binary
 RUN apt-get update
