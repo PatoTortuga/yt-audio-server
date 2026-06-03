@@ -53,6 +53,11 @@ app.post('/extract', async (req, res) => {
       options.cookies = COOKIES_PATH;
     }
 
+    if (process.env.PROXY_URL) {
+      console.log("Injecting residential proxy into extraction request.");
+      options.proxy = process.env.PROXY_URL;
+    }
+
     // Diagnostic run to see exactly what YouTube is offering our IP
     try {
       console.log("Running diagnostic: fetching available formats...");
