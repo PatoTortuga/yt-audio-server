@@ -44,7 +44,8 @@ app.post('/extract', async (req, res) => {
         'referer:youtube.com',
         'user-agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36'
       ],
-      noPlaylist: true // Critical fix: Prevents full playlist parsing
+      noPlaylist: true, // Critical fix: Prevents full playlist parsing
+      extractorArgs: 'youtube:player_client=android,web_safari'
     };
 
     if (fs.existsSync(COOKIES_PATH)) {
