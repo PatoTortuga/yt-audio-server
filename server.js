@@ -29,7 +29,7 @@ app.post('/extract', async (req, res) => {
   if (!url) return res.status(400).json({ error: "Missing YouTube URL" });
 
   const tempId = crypto.randomBytes(8).toString('hex');
-  const outputPath = `/tmp/audio_${tempId}.webm`;
+  const outputPath = `/tmp/audio_${tempId}.mp3`;
 
   try {
     console.log(`Starting proxy download sequence for URL: ${url}`);
@@ -37,7 +37,7 @@ app.post('/extract', async (req, res) => {
     const options = {
       format: 'bestaudio/best',
       extractAudio: true,
-      audioFormat: 'webm',
+      audioFormat: 'mp3',
       output: outputPath,
       noCheckCertificates: true,
       noWarnings: true,
@@ -61,7 +61,7 @@ app.post('/extract', async (req, res) => {
     }
 
     console.log(`Download successful. Streaming binary data back to Netlify...`);
-    res.setHeader('Content-Type', 'audio/webm');
+    res.setHeader('Content-Type', 'audio/mpeg');
     
     const readStream = fs.createReadStream(outputPath);
     readStream.pipe(res);
