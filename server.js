@@ -52,6 +52,21 @@ app.post('/extract', async (req, res) => {
       options.cookies = COOKIES_PATH;
     }
 
+    // Diagnostic run to see exactly what YouTube is offering our IP
+    try {
+      console.log("Running diagnostic: fetching available formats...");
+      const formatOptions = { ...options };
+      delete formatOptions.format;
+      delete formatOptions.dumpJson;
+      formatOptions.listFormats = true;
+      const formatsOutput = await youtubedl(url, formatOptions);
+      console.log("--- FORMATS DIAGNOSTIC START ---");
+      console.log(formatsOutput);
+      console.log("--- FORMATS DIAGNOSTIC END ---");
+    } catch (diagError) {
+      console.error("Diagnostic format listing failed:", diagError.message);
+    }
+
     // Use yt-dlp to extract the best audio stream URL natively
     const output = await youtubedl(url, options);
 
