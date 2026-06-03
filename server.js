@@ -36,7 +36,7 @@ app.post('/extract', async (req, res) => {
     
     const options = {
       dumpJson: true,
-      format: 'bestaudio',
+      format: 'bestaudio/best',
       noCheckCertificates: true,
       noWarnings: true,
       preferFreeFormats: true,
