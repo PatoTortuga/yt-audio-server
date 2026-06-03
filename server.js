@@ -1,9 +1,22 @@
 const express = require('express');
 const cors = require('cors');
 const youtubedl = require('youtube-dl-exec');
+const fs = require('fs');
 
 const app = express();
 const port = process.env.PORT || 3000;
+const COOKIES_PATH = '/tmp/cookies.txt';
+
+if (process.env.YOUTUBE_COOKIES) {
+  try {
+    fs.writeFileSync(COOKIES_PATH, process.env.YOUTUBE_COOKIES, 'utf8');
+    console.log("Successfully wrote YOUTUBE_COOKIES to " + COOKIES_PATH);
+  } catch (error) {
+    console.error("Failed to write YouTube cookies file:", error);
+  }
+} else {
+  console.log("No YOUTUBE_COOKIES environment variable found. Proceeding without cookies.");
+}
 
 app.use(cors());
 app.use(express.json());
@@ -21,8 +34,7 @@ app.post('/extract', async (req, res) => {
   try {
     console.log(`Extracting audio stream for URL: ${url}`);
     
-    // Use yt-dlp to extract the best audio stream URL natively
-    const output = await youtubedl(url, {
+    const options = {
       dumpJson: true,
       format: 'bestaudio',
       noCheckCertificates: true,
@@ -33,7 +45,15 @@ app.post('/extract', async (req, res) => {
         'user-agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36'
       ],
       noPlaylist: true // Critical fix: Prevents full playlist parsing
-    });
+    };
+
+    if (fs.existsSync(COOKIES_PATH)) {
+      console.log("Injecting YouTube cookies into extraction request.");
+      options.cookies = COOKIES_PATH;
+    }
+
+    // Use yt-dlp to extract the best audio stream URL natively
+    const output = await youtubedl(url, options);
 
     if (!output || !output.url) {
       throw new Error("Could not extract a valid audio URL from the video.");
